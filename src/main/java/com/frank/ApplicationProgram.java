@@ -1,8 +1,10 @@
 package com.frank;
 
 import com.frank.types.Bowler;
+import com.frank.types.NonNumericInputException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -16,15 +18,23 @@ public class ApplicationProgram {
        LoadBowlers();  // call method to instantiate some test data in ArrayList
 
        System.out.println("-".repeat(80) + "\n--- List of Bowlers ---");
+        try {
+            for (Bowler aBowler : theBowlers) {
+                ShowBowler(aBowler);
+            }
+        } catch (NullPointerException exceptionObject) {
+            System.out.println("Null Pointer Encountered");
+            System.out.println("The system message says: " + exceptionObject.getMessage());
+            System.out.println("How we got to the exception: ");
+            System.out.println(Arrays.toString(exceptionObject.getStackTrace()));
+            System.out.println("Execution continuing....");
+        }
+        System.out.println("-".repeat(80));
+        String response = "";
+        boolean shouldLoop = true;
+        Scanner theKeyBoard = new Scanner(System.in);
 
-       for (Bowler aBowler : theBowlers) {
-           ShowBowler(aBowler);
-       }
-       System.out.println("-".repeat(80));
-       String response = "";
-       boolean shouldLoop = true;
-       Scanner theKeyBoard = new Scanner(System.in);
-       while(shouldLoop) {
+        while (shouldLoop) {
             System.out.println("\nEnter the number of the Bowler you would like displayed");
             System.out.printf("Valid numbers are 1 thru %d\nYour choice: ", theBowlers.size());
             response = theKeyBoard.nextLine();
@@ -32,14 +42,21 @@ public class ApplicationProgram {
                 shouldLoop = false;
                 continue;
             }
-            int bowlerNumber = Integer.parseInt(response);
-            ShowBowler(theBowlers.get(bowlerNumber-1));
-        }
+            int bowlerNumber = 0;
+            try {
+                bowlerNumber = Integer.parseInt(response);
+            } catch (NumberFormatException exceptionObject) {
+                // throw custom exception
+                throw new NonNumericInputException("input value " + response + " was non-numeric");
 
+            }
+            ShowBowler(theBowlers.get(bowlerNumber - 1));
+        }
         System.out.println("-".repeat(80));
 
         System.out.println("End of application program");
         return;
+
     }
     /**
      * Display data for a Bowler
@@ -55,7 +72,7 @@ public class ApplicationProgram {
         theBowlers.add(new Bowler("Fred Flintstone", new int[] {230, 260, 275}));
         theBowlers.add(new Bowler("Barney Rubble",   new int[] {120, 140, 190}));
         theBowlers.add(new Bowler("The Dude",        new int[] {260, 270, 290}));
-        theBowlers.add(new Bowler());
+        // theBowlers.add(new Bowler());
         theBowlers.add(new Bowler("Roy Munson",      new int[] {225, 285, 252}));
     }
 }
